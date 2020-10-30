@@ -1,0 +1,60 @@
+{
+  "name": "@fiahfy/flow2ts",
+  "description": "CLI to convert Flow code into TypeScript with babel-plugin-flow-to-typescript",
+  "version": "0.0.1",
+  "author": {
+    "name": "fiahfy",
+    "email": "d.fiahfy@gmail.com",
+    "url": "https://fiahfy.github.io/"
+  },
+  "bin": {
+    "flow2ts": "dist/cli.js"
+  },
+  "bugs": {
+    "url": "https://github.com/fiahfy/flow2ts/issues"
+  },
+  "dependencies": {
+    "@babel/core": "^7.12.3",
+    "babel-plugin-flow-to-typescript": "^0.6.0",
+    "glob": "^7.1.6",
+    "meow": "^8.0.0"
+  },
+  "devDependencies": {
+    "@fiahfy/eslint-config": "^0.0.8",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^14.14.6",
+    "eslint": "^7.12.1",
+    "jest": "^26.6.1",
+    "prettier": "^2.1.2",
+    "ts-jest": "^26.4.3",
+    "typescript": "^4.0.5"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/fiahfy/flow2ts",
+  "keywords": [
+    "converter",
+    "flow",
+    "typescript"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fiahfy/flow2ts.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "lint": "eslint -f codeframe --ext .js,.ts --ignore-path .gitignore .",
+    "test": "npm run lint && jest"
+  },
+  "types": "dist/index.d.js"
+}
