@@ -19,6 +19,7 @@ const convertFile = (src: string): void => {
     caller: {
       name: '@fiahfy/flow2ts',
     },
+    configFile: false,
     plugins: [babelPluginFlowToTypescript],
   })
 

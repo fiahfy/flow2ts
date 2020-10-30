@@ -44,21 +44,6 @@ const main = async (): Promise<void> => {
   }
 
   convert(inputs)
-
-  // const stat = fs.statSync(source)
-  // let buf
-  // if (stat.isDirectory()) {
-  //   buf = fs.readdirSync(source).map((filename) => {
-  //     return fs.readFileSync(path.join(source, filename))
-  //   })
-  // } else {
-  //   buf = fs.readFileSync(source)
-  // }
-
-  // const data = await convert(buf)
-  // fs.writeFileSync(target, data)
-
-  // console.log(`Output ${path.resolve(target)}`)
 }
 
 main().catch((e) => {
