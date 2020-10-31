@@ -11,10 +11,11 @@ const main = async (): Promise<void> => {
 	Options:
     -v, --version  output the version number
     -h, --help     output usage information
+    --ext          specify converted file extension (default: detect)
 
 	Examples:
     $ flow2ts index.js
-    $ flow2ts src/**/.js
+    $ flow2ts src/**/*.js
 `,
     {
       flags: {
@@ -25,6 +26,9 @@ const main = async (): Promise<void> => {
         version: {
           type: 'boolean',
           alias: 'v',
+        },
+        ext: {
+          type: 'string',
         },
       },
     }
@@ -43,7 +47,14 @@ const main = async (): Promise<void> => {
     return cli.showHelp()
   }
 
-  convert(inputs)
+  const ext = cli.flags.ext
+  if (ext && ext !== 'detect' && !ext?.match(/^(\.\w+)+$/)) {
+    console.error('Invalid specified extension')
+    process.exitCode = 1
+    return
+  }
+
+  convert(inputs, { ext })
 }
 
 main().catch((e) => {
