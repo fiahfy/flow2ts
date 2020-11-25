@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
+import fs from 'fs'
+import path from 'path'
 import meow from 'meow'
+import { isJSX } from './detector'
 import { convert } from '.'
+
+type Options = {
+  ext?: string
+}
 
 const main = async (): Promise<void> => {
   const cli = meow(
@@ -54,7 +61,35 @@ const main = async (): Promise<void> => {
     return
   }
 
-  convert(inputs, { ext })
+  execFiles(inputs, { ext })
+}
+
+const execFiles = (inputs: string[], options: Options): void => {
+  for (const input of inputs) {
+    execFile(input, options)
+  }
+}
+
+const execFile = (input: string, options: Options): void => {
+  const code = fs.readFileSync(input, 'utf8')
+  const ext = extension(code, options.ext)
+
+  const parsed = path.parse(input)
+  parsed.base = ''
+  parsed.ext = ext
+  const dist = path.format(parsed)
+
+  const converted = convert(code)
+
+  fs.writeFileSync(dist, converted)
+  console.log(`Output ${path.resolve(dist)}`)
+}
+
+const extension = (code: string, ext?: string): string => {
+  if (!ext || ext === 'detect') {
+    return isJSX(code) ? '.tsx' : '.ts'
+  }
+  return ext
 }
 
 main().catch((e) => {
