@@ -7,7 +7,8 @@ import { isJSX } from './detector'
 import { convert } from '.'
 
 type Options = {
-  ext?: string
+  ext: string
+  reactTypes: boolean
 }
 
 const main = async (): Promise<void> => {
@@ -19,6 +20,7 @@ const main = async (): Promise<void> => {
     -v, --version  output the version number
     -h, --help     output usage information
     --ext          specify converted file extension (default: detect)
+    --react-types  transform react types
 
 	Examples:
     $ flow2ts index.js
@@ -37,40 +39,43 @@ const main = async (): Promise<void> => {
         ext: {
           type: 'string',
         },
+        reactTypes: {
+          type: 'boolean',
+        },
       },
     }
   )
 
-  if (cli.flags.version) {
+  const inputs = cli.input
+  const { help, version, ext = 'detect', reactTypes = false } = cli.flags
+
+  if (version) {
     return cli.showVersion()
   }
-  if (cli.flags.help) {
+  if (help) {
     return cli.showHelp()
   }
-
-  const inputs = cli.input
 
   if (!inputs.length) {
     return cli.showHelp()
   }
 
-  const ext = cli.flags.ext
-  if (ext && ext !== 'detect' && !ext?.match(/^(\.\w+)+$/)) {
+  if (ext !== 'detect' && !ext?.match(/^(\.\w+)+$/)) {
     console.error('Invalid specified extension')
     process.exitCode = 1
     return
   }
 
-  execFiles(inputs, { ext })
+  runFiles(inputs, { ext, reactTypes })
 }
 
-const execFiles = (inputs: string[], options: Options): void => {
+const runFiles = (inputs: string[], options: Options): void => {
   for (const input of inputs) {
-    execFile(input, options)
+    runFile(input, options)
   }
 }
 
-const execFile = (input: string, options: Options): void => {
+const runFile = (input: string, options: Options): void => {
   const code = fs.readFileSync(input, 'utf8')
   const ext = extension(code, options.ext)
 
@@ -79,14 +84,14 @@ const execFile = (input: string, options: Options): void => {
   parsed.ext = ext
   const dist = path.format(parsed)
 
-  const converted = convert(code)
+  const converted = convert(code, { reactTypes: options.reactTypes })
 
   fs.writeFileSync(dist, converted)
   console.log(`Output ${path.resolve(dist)}`)
 }
 
-const extension = (code: string, ext?: string): string => {
-  if (!ext || ext === 'detect') {
+const extension = (code: string, ext: string): string => {
+  if (ext === 'detect') {
     return isJSX(code) ? '.tsx' : '.ts'
   }
   return ext
