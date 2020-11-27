@@ -1,7 +1,7 @@
 {
   "name": "@fiahfy/flow2ts",
   "description": "CLI to convert Flow code into TypeScript with babel-plugin-flow-to-typescript",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": {
     "name": "fiahfy",
     "email": "d.fiahfy@gmail.com",
