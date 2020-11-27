@@ -15,7 +15,7 @@ npm install @fiahfy/flow2ts
 ```js
 import { convert } from '@fiahfy/flow2ts'
 
-convert(['index.js'])
+convert(code)
 ```
 
 ## CLI
