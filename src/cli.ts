@@ -7,6 +7,7 @@ import { isJSX } from './detector'
 import { convert } from '.'
 
 type Options = {
+  dispatchAny: boolean
   ext: string
   reactTypes: boolean
 }
@@ -21,6 +22,7 @@ const main = async (): Promise<void> => {
     -h, --help     output usage information
     --ext          specify converted file extension (default: detect)
     --react-types  transform react types
+    --dispatch-any omit any type on dispatch
 
 	Examples:
     $ flow2ts index.js
@@ -39,6 +41,9 @@ const main = async (): Promise<void> => {
         ext: {
           type: 'string',
         },
+        dispatchAny: {
+          type: 'boolean',
+        },
         reactTypes: {
           type: 'boolean',
         },
@@ -47,7 +52,13 @@ const main = async (): Promise<void> => {
   )
 
   const inputs = cli.input
-  const { help, version, ext = 'detect', reactTypes = false } = cli.flags
+  const {
+    help,
+    version,
+    ext = 'detect',
+    dispatchAny = false,
+    reactTypes = false,
+  } = cli.flags
 
   if (version) {
     return cli.showVersion()
@@ -66,7 +77,7 @@ const main = async (): Promise<void> => {
     return
   }
 
-  runFiles(inputs, { ext, reactTypes })
+  runFiles(inputs, { ext, dispatchAny, reactTypes })
 }
 
 const runFiles = (inputs: string[], options: Options): void => {
@@ -84,7 +95,7 @@ const runFile = (input: string, options: Options): void => {
   parsed.ext = ext
   const dist = path.format(parsed)
 
-  const converted = convert(code, { reactTypes: options.reactTypes })
+  const converted = convert(code, options)
 
   fs.writeFileSync(dist, converted)
   console.log(`Output ${path.resolve(dist)}`)
