@@ -9,7 +9,8 @@ import { convert } from '.'
 type Options = {
   dispatchAny: boolean
   ext: string
-  reactTypes: boolean
+  mappedObject: boolean
+  react: boolean
 }
 
 const main = async (): Promise<void> => {
@@ -18,11 +19,13 @@ const main = async (): Promise<void> => {
 	Usage: flow2ts [options] <source>
 
 	Options:
-    -v, --version  output the version number
-    -h, --help     output usage information
-    --ext          specify converted file extension (default: detect)
-    --react-types  transform react types
-    --dispatch-any omit any type on dispatch
+    -v, --version   output the version number
+    -h, --help      output usage information
+    --ext           specify converted file extension (default: detect)
+    -a, --apply-all apply all following extended options
+    --dispatch-any  omit any type on dispatch
+    --mapped-object use mapped object type if index signature parameter type is not string or number
+    --react         transform react types
 
 	Examples:
     $ flow2ts index.js
@@ -33,32 +36,43 @@ const main = async (): Promise<void> => {
         help: {
           type: 'boolean',
           alias: 'h',
+          default: false,
         },
         version: {
           type: 'boolean',
           alias: 'v',
+          default: false,
         },
         ext: {
           type: 'string',
+          default: 'detect',
+        },
+        applyAll: {
+          type: 'boolean',
+          alias: 'a',
+          default: false,
         },
         dispatchAny: {
           type: 'boolean',
+          default: false,
         },
-        reactTypes: {
+        mappedObject: {
           type: 'boolean',
+          default: false,
+        },
+        react: {
+          type: 'boolean',
+          default: false,
         },
       },
     }
   )
 
   const inputs = cli.input
-  const {
-    help,
-    version,
-    ext = 'detect',
-    dispatchAny = false,
-    reactTypes = false,
-  } = cli.flags
+  const { help, version, ext, applyAll } = cli.flags
+  const dispatchAny = applyAll ? true : cli.flags.dispatchAny
+  const mappedObject = applyAll ? true : cli.flags.mappedObject
+  const react = applyAll ? true : cli.flags.react
 
   if (version) {
     return cli.showVersion()
@@ -77,7 +91,7 @@ const main = async (): Promise<void> => {
     return
   }
 
-  runFiles(inputs, { ext, dispatchAny, reactTypes })
+  runFiles(inputs, { ext, dispatchAny, mappedObject, react })
 }
 
 const runFiles = (inputs: string[], options: Options): void => {
