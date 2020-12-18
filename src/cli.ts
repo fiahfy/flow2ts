@@ -102,14 +102,13 @@ const runFiles = (inputs: string[], options: Options): void => {
 
 const runFile = (input: string, options: Options): void => {
   const code = fs.readFileSync(input, 'utf8')
-  const ext = extension(code, options.ext)
+
+  const converted = convert(code, options)
 
   const parsed = path.parse(input)
   parsed.base = ''
-  parsed.ext = ext
+  parsed.ext = extension(converted, options.ext)
   const dist = path.format(parsed)
-
-  const converted = convert(code, options)
 
   fs.writeFileSync(dist, converted)
   console.log(`Output ${path.resolve(dist)}`)
