@@ -34,9 +34,6 @@ export const convert = (
   }
 
   const result = transformSync(code, {
-    caller: {
-      name: '@fiahfy/flow2ts',
-    },
     configFile: false,
     plugins,
   })

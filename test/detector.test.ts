@@ -2,29 +2,31 @@ import { isJSX } from '../src/detector'
 
 const jsxCode1 = `
 import * as React from 'react';
+
+const div = <div>dummy</div>;
 `
 const jsxCode2 = `
-import React from 'react';
+import * as React from 'react';
+
+const obj = {
+  element: <div>dummy</div>
+}
 `
 const jsxCode3 = `
-import * as react from 'react'
+import * as React from 'react';
+
+const Component: React.FC = () => <div>dummy</div>;
 `
-const jsxCode4 = `
-import * as react from "react";
+const notJSXCode1 = `
+const n = 1;
 `
-const jsxCode5 = `
-import { useEffect } from 'react';
+const notJSXCode2 = `
+import * as React from 'react';
 `
-const jsxCode6 = `
-import {
-  useEffect
-} from 'react';
-`
-const jsxCode7 = `
-import   *   as   React   from   'react'   ;
-`
-const notJSXCode = `
-import * as ReactDOM from 'react-dom';
+const notJSXCode3 = `
+import * as React from 'react';
+
+type Element = JSX.Element;
 `
 
 describe('isJSX', () => {
@@ -32,10 +34,8 @@ describe('isJSX', () => {
     expect(isJSX(jsxCode1)).toBe(true)
     expect(isJSX(jsxCode2)).toBe(true)
     expect(isJSX(jsxCode3)).toBe(true)
-    expect(isJSX(jsxCode4)).toBe(true)
-    expect(isJSX(jsxCode5)).toBe(true)
-    expect(isJSX(jsxCode6)).toBe(true)
-    expect(isJSX(jsxCode7)).toBe(true)
-    expect(isJSX(notJSXCode)).toBe(false)
+    expect(isJSX(notJSXCode1)).toBe(false)
+    expect(isJSX(notJSXCode2)).toBe(false)
+    expect(isJSX(notJSXCode3)).toBe(false)
   })
 })

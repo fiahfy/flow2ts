@@ -8,6 +8,9 @@ const t = (code: string) => {
     .join('\n')
 }
 
+// supress warnings for existential type in flow
+console.warn = jest.fn()
+
 describe('convert', () => {
   test('should work', async () => {
     const code = `
