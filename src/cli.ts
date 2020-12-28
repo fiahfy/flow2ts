@@ -35,13 +35,13 @@ const main = async (): Promise<void> => {
       flags: {
         help: {
           type: 'boolean',
-          alias: 'h',
           default: false,
+          alias: 'h',
         },
         version: {
           type: 'boolean',
-          alias: 'v',
           default: false,
+          alias: 'v',
         },
         ext: {
           type: 'string',
@@ -49,8 +49,8 @@ const main = async (): Promise<void> => {
         },
         applyAll: {
           type: 'boolean',
-          alias: 'a',
           default: false,
+          alias: 'a',
         },
         dispatchAny: {
           type: 'boolean',
