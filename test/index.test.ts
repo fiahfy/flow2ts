@@ -73,7 +73,7 @@ describe('convert', () => {
     expect(t(convert(code, { dispatchAny: false }))).toBe(t(falseResult))
     expect(t(convert(code, { dispatchAny: true }))).toBe(t(trueResult))
   })
-  test('should work with react types option', async () => {
+  test('should work with mapped types option', async () => {
     const code = `
     type T11 = {
       [x: string]: any
@@ -144,8 +144,8 @@ describe('convert', () => {
     type Key = "key";
     type T41 = { [x in Key]: any };
     type T42 = { [x in Key]: any };`
-    expect(t(convert(code, { mappedObject: false }))).toBe(t(falseResult))
-    expect(t(convert(code, { mappedObject: true }))).toBe(t(trueResult))
+    expect(t(convert(code, { mappedTypes: false }))).toBe(t(falseResult))
+    expect(t(convert(code, { mappedTypes: true }))).toBe(t(trueResult))
   })
   test('should work with react types option', async () => {
     const code = `
@@ -169,7 +169,104 @@ describe('convert', () => {
       e: React.ReactElement;
       n: React.ReactNode;
     };`
-    expect(t(convert(code, { react: false }))).toBe(t(falseResult))
-    expect(t(convert(code, { react: true }))).toBe(t(trueResult))
+    expect(t(convert(code, { reactTypes: false }))).toBe(t(falseResult))
+    expect(t(convert(code, { reactTypes: true }))).toBe(t(trueResult))
+  })
+  test('should work with union types option', async () => {
+    const code = `
+    type T1 = 'foo';
+    type T2 = 'foo' | 'bar';
+    type T3 = ?'foo';
+    type T4 = ?'foo' | 'bar';
+    type T5 = ?('foo' | 'bar');
+    type T6 = ?'foo' | 'bar' | 'baz';
+    type T7 = ?('foo' | 'bar' | 'baz');
+    type T8 = ((('foo' | 'bar') | undefined) | null);
+    type T9 = (('foo' | 'bar') | (undefined | null));
+    type T10 = ?React.Node;
+    type T11 = ?React.Node | React.Element;
+    type U = {
+      k1: 'foo',
+      k2: 'foo' | 'bar',
+      k3: ?'foo',
+      k4: ?'foo' | 'bar',
+      k5: ?('foo' | 'bar'),
+      k6: ?'foo' | 'bar' | 'baz',
+      k7: ?('foo' | 'bar' | 'baz'),
+      k8: ((('foo' | 'bar') | undefined) | null),
+      k9: (('foo' | 'bar') | (undefined | null)),
+      k10: ?React.Node,
+      k11: ?React.Node | React.Element,
+    };
+    type V = {
+      k1?: 'foo',
+      k2?: 'foo' | 'bar',
+      k3?: ?'foo',
+      k4?: ?'foo' | 'bar',
+    }`
+    const falseResult = `
+    type T1 = "foo";
+    type T2 = "foo" | "bar";
+    type T3 = "foo" | undefined | null;
+    type T4 = ("foo" | undefined | null) | "bar";
+    type T5 = ("foo" | "bar") | undefined | null;
+    type T6 = ("foo" | undefined | null) | "bar" | "baz";
+    type T7 = ("foo" | "bar" | "baz") | undefined | null;
+    type T8 = (("foo" | "bar") | undefined) | null;
+    type T9 = ("foo" | "bar") | (undefined | null);
+    type T10 = React.Node | undefined | null;
+    type T11 = (React.Node | undefined | null) | React.Element;
+    type U = {
+      k1: "foo";
+      k2: "foo" | "bar";
+      k3: "foo" | undefined | null;
+      k4: ("foo" | undefined | null) | "bar";
+      k5: ("foo" | "bar") | undefined | null;
+      k6: ("foo" | undefined | null) | "bar" | "baz";
+      k7: ("foo" | "bar" | "baz") | undefined | null;
+      k8: (("foo" | "bar") | undefined) | null;
+      k9: ("foo" | "bar") | (undefined | null);
+      k10: React.Node | undefined | null;
+      k11: (React.Node | undefined | null) | React.Element;
+    };
+    type V = {
+      k1?: "foo";
+      k2?: "foo" | "bar";
+      k3?: "foo" | null;
+      k4?: ("foo" | undefined | null) | "bar";
+    };`
+    const trueResult = `
+    type T1 = "foo";
+    type T2 = "foo" | "bar";
+    type T3 = "foo" | undefined | null;
+    type T4 = "foo" | "bar" | undefined | null;
+    type T5 = "foo" | "bar" | undefined | null;
+    type T6 = "foo" | "bar" | "baz" | undefined | null;
+    type T7 = "foo" | "bar" | "baz" | undefined | null;
+    type T8 = "foo" | "bar" | undefined | null;
+    type T9 = "foo" | "bar" | undefined | null;
+    type T10 = React.Node | undefined | null;
+    type T11 = React.Node | React.Element | undefined | null;
+    type U = {
+      k1: "foo";
+      k2: "foo" | "bar";
+      k3: "foo" | undefined | null;
+      k4: "foo" | "bar" | undefined | null;
+      k5: "foo" | "bar" | undefined | null;
+      k6: "foo" | "bar" | "baz" | undefined | null;
+      k7: "foo" | "bar" | "baz" | undefined | null;
+      k8: "foo" | "bar" | undefined | null;
+      k9: "foo" | "bar" | undefined | null;
+      k10: React.Node | undefined | null;
+      k11: React.Node | React.Element | undefined | null;
+    };
+    type V = {
+      k1?: "foo";
+      k2?: "foo" | "bar";
+      k3?: "foo" | null;
+      k4?: "foo" | "bar" | undefined | null;
+    };`
+    expect(t(convert(code, { unionTypes: false }))).toBe(t(falseResult))
+    expect(t(convert(code, { unionTypes: true }))).toBe(t(trueResult))
   })
 })

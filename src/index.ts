@@ -1,14 +1,18 @@
 import { PluginItem, PluginObj, transformSync } from '@babel/core'
 import {
+  TSType,
   isIdentifier,
   isTSAnyKeyword,
   isTSIndexSignature,
+  isTSNullKeyword,
   isTSTypeAnnotation,
   isTSTypeParameterInstantiation,
   isTSTypeReference,
+  isTSUndefinedKeyword,
   isTSUnionType,
   tsMappedType,
   tsTypeParameter,
+  tsUnionType,
 } from '@babel/types'
 import babelPluginFlowToTypescript from 'babel-plugin-flow-to-typescript'
 
@@ -16,21 +20,30 @@ export const convert = (
   code: string,
   options: {
     dispatchAny?: boolean
-    mappedObject?: boolean
-    react?: boolean
+    mappedTypes?: boolean
+    reactTypes?: boolean
+    unionTypes?: boolean
   } = {}
 ): string => {
-  const { dispatchAny = false, mappedObject = false, react = false } = options
+  const {
+    dispatchAny = false,
+    mappedTypes = false,
+    reactTypes = false,
+    unionTypes = false,
+  } = options
 
   const plugins: PluginItem[] = [babelPluginFlowToTypescript]
   if (dispatchAny) {
     plugins.push(babelPluginDispatchAny)
   }
-  if (mappedObject) {
-    plugins.push(babelPluginMappedType)
+  if (mappedTypes) {
+    plugins.push(babelPluginMappedTypes)
   }
-  if (react) {
+  if (reactTypes) {
     plugins.push(babelPluginReactTypes)
+  }
+  if (unionTypes) {
+    plugins.push(babelPluginUnionTypes)
   }
 
   const result = transformSync(code, {
@@ -59,7 +72,7 @@ const babelPluginDispatchAny = (): PluginObj => {
   }
 }
 
-const babelPluginMappedType = (): PluginObj => {
+const babelPluginMappedTypes = (): PluginObj => {
   return {
     visitor: {
       TSTypeLiteral(path) {
@@ -107,6 +120,40 @@ const babelPluginReactTypes = (): PluginObj => {
               right.name = 'ReactNode'
               break
           }
+        }
+      },
+    },
+  }
+}
+
+const babelPluginUnionTypes = (): PluginObj => {
+  return {
+    visitor: {
+      TSUnionType(path) {
+        const { types } = path.node
+        if (types.some((type) => isTSUnionType(type))) {
+          const flattenTypes = types.reduce((carry, type) => {
+            if (isTSUnionType(type)) {
+              return [...carry, ...type.types]
+            } else {
+              return [...carry, type]
+            }
+          }, [] as TSType[])
+          const otherTypes = flattenTypes.filter(
+            (type) => !isTSUndefinedKeyword(type) && !isTSNullKeyword(type)
+          )
+          const undefinedKeywords = flattenTypes.filter((type) =>
+            isTSUndefinedKeyword(type)
+          )
+          const nullKeywords = flattenTypes.filter((type) =>
+            isTSNullKeyword(type)
+          )
+          const replacement = tsUnionType([
+            ...otherTypes,
+            ...undefinedKeywords,
+            ...nullKeywords,
+          ])
+          path.replaceWith(replacement)
         }
       },
     },

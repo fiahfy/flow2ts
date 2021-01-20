@@ -9,8 +9,9 @@ import { convert } from '.'
 type Options = {
   dispatchAny: boolean
   ext: string
-  mappedObject: boolean
-  react: boolean
+  mappedTypes: boolean
+  reactTypes: boolean
+  unionTypes: boolean
 }
 
 const main = async (): Promise<void> => {
@@ -24,8 +25,9 @@ const main = async (): Promise<void> => {
     --ext           specify converted file extension (default: detect)
     -a, --apply-all apply all following extended options
     --dispatch-any  omit any type on dispatch
-    --mapped-object use mapped object type if index signature parameter type is not string or number
-    --react         transform react types
+    --mapped-types  use mapped types if index signature parameter type is not string or number
+    --react-types   transform react types
+    --union-types   flatten union types
 
 	Examples:
     $ flow2ts index.js
@@ -56,11 +58,15 @@ const main = async (): Promise<void> => {
           type: 'boolean',
           default: false,
         },
-        mappedObject: {
+        mappedTypes: {
           type: 'boolean',
           default: false,
         },
-        react: {
+        reactTypes: {
+          type: 'boolean',
+          default: false,
+        },
+        unionTypes: {
           type: 'boolean',
           default: false,
         },
@@ -71,8 +77,9 @@ const main = async (): Promise<void> => {
   const inputs = cli.input
   const { help, version, ext, applyAll } = cli.flags
   const dispatchAny = applyAll ? true : cli.flags.dispatchAny
-  const mappedObject = applyAll ? true : cli.flags.mappedObject
-  const react = applyAll ? true : cli.flags.react
+  const mappedTypes = applyAll ? true : cli.flags.mappedTypes
+  const reactTypes = applyAll ? true : cli.flags.reactTypes
+  const unionTypes = applyAll ? true : cli.flags.unionTypes
 
   if (version) {
     return cli.showVersion()
@@ -91,7 +98,7 @@ const main = async (): Promise<void> => {
     return
   }
 
-  runFiles(inputs, { ext, dispatchAny, mappedObject, react })
+  runFiles(inputs, { ext, dispatchAny, mappedTypes, reactTypes, unionTypes })
 }
 
 const runFiles = (inputs: string[], options: Options): void => {
