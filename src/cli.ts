@@ -130,5 +130,5 @@ const extension = (code: string, ext: string): string => {
 
 main().catch((e) => {
   console.error(e)
-  process.exitCode = 1
+  process.exit(1)
 })
