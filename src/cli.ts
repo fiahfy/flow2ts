@@ -94,8 +94,7 @@ const main = async (): Promise<void> => {
 
   if (ext !== 'detect' && !ext?.match(/^(\.\w+)+$/)) {
     console.error('Invalid specified extension')
-    process.exitCode = 1
-    return
+    return process.exit(1)
   }
 
   runFiles(inputs, { ext, dispatchAny, mappedTypes, reactTypes, unionTypes })
