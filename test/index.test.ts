@@ -174,17 +174,18 @@ describe('convert', () => {
   })
   test('should work with union types option', async () => {
     const code = `
-    type T1 = 'foo';
-    type T2 = 'foo' | 'bar';
-    type T3 = ?'foo';
-    type T4 = ?'foo' | 'bar';
-    type T5 = ?('foo' | 'bar');
-    type T6 = ?'foo' | 'bar' | 'baz';
-    type T7 = ?('foo' | 'bar' | 'baz');
-    type T8 = ((('foo' | 'bar') | undefined) | null);
-    type T9 = (('foo' | 'bar') | (undefined | null));
-    type T10 = ?React.Node;
-    type T11 = ?React.Node | React.Element;
+    type T11 = 'foo';
+    type T12 = 'foo' | 'bar';
+    type T13 = ?'foo';
+    type T21 = ?'foo' | 'bar';
+    type T22 = ?'foo' | ?'bar';
+    type T23 = ?('foo' | 'bar');
+    type T31 = ?'foo' | 'bar' | 'baz';
+    type T32 = ?('foo' | 'bar' | 'baz');
+    type T41 = ((('foo' | 'bar') | undefined) | null);
+    type T42 = (('foo' | 'bar') | (undefined | null));
+    type T51 = ?React.Node;
+    type T52 = ?React.Node | React.Element;
     type U = {
       k1: 'foo',
       k2: 'foo' | 'bar',
@@ -205,17 +206,18 @@ describe('convert', () => {
       k4?: ?'foo' | 'bar',
     }`
     const falseResult = `
-    type T1 = "foo";
-    type T2 = "foo" | "bar";
-    type T3 = "foo" | undefined | null;
-    type T4 = ("foo" | undefined | null) | "bar";
-    type T5 = ("foo" | "bar") | undefined | null;
-    type T6 = ("foo" | undefined | null) | "bar" | "baz";
-    type T7 = ("foo" | "bar" | "baz") | undefined | null;
-    type T8 = (("foo" | "bar") | undefined) | null;
-    type T9 = ("foo" | "bar") | (undefined | null);
-    type T10 = React.Node | undefined | null;
-    type T11 = (React.Node | undefined | null) | React.Element;
+    type T11 = "foo";
+    type T12 = "foo" | "bar";
+    type T13 = "foo" | undefined | null;
+    type T21 = ("foo" | undefined | null) | "bar";
+    type T22 = ("foo" | undefined | null) | ("bar" | undefined | null);
+    type T23 = ("foo" | "bar") | undefined | null;
+    type T31 = ("foo" | undefined | null) | "bar" | "baz";
+    type T32 = ("foo" | "bar" | "baz") | undefined | null;
+    type T41 = (("foo" | "bar") | undefined) | null;
+    type T42 = ("foo" | "bar") | (undefined | null);
+    type T51 = React.Node | undefined | null;
+    type T52 = (React.Node | undefined | null) | React.Element;
     type U = {
       k1: "foo";
       k2: "foo" | "bar";
@@ -236,17 +238,18 @@ describe('convert', () => {
       k4?: ("foo" | undefined | null) | "bar";
     };`
     const trueResult = `
-    type T1 = "foo";
-    type T2 = "foo" | "bar";
-    type T3 = "foo" | undefined | null;
-    type T4 = "foo" | "bar" | undefined | null;
-    type T5 = "foo" | "bar" | undefined | null;
-    type T6 = "foo" | "bar" | "baz" | undefined | null;
-    type T7 = "foo" | "bar" | "baz" | undefined | null;
-    type T8 = "foo" | "bar" | undefined | null;
-    type T9 = "foo" | "bar" | undefined | null;
-    type T10 = React.Node | undefined | null;
-    type T11 = React.Node | React.Element | undefined | null;
+    type T11 = "foo";
+    type T12 = "foo" | "bar";
+    type T13 = "foo" | undefined | null;
+    type T21 = "foo" | "bar" | undefined | null;
+    type T22 = "foo" | "bar" | undefined | null;
+    type T23 = "foo" | "bar" | undefined | null;
+    type T31 = "foo" | "bar" | "baz" | undefined | null;
+    type T32 = "foo" | "bar" | "baz" | undefined | null;
+    type T41 = "foo" | "bar" | undefined | null;
+    type T42 = "foo" | "bar" | undefined | null;
+    type T51 = React.Node | undefined | null;
+    type T52 = React.Node | React.Element | undefined | null;
     type U = {
       k1: "foo";
       k2: "foo" | "bar";

@@ -142,12 +142,12 @@ const babelPluginUnionTypes = (): PluginObj => {
           const otherTypes = flattenTypes.filter(
             (type) => !isTSUndefinedKeyword(type) && !isTSNullKeyword(type)
           )
-          const undefinedKeywords = flattenTypes.filter((type) =>
-            isTSUndefinedKeyword(type)
-          )
-          const nullKeywords = flattenTypes.filter((type) =>
-            isTSNullKeyword(type)
-          )
+          const undefinedKeywords = flattenTypes
+            .filter((type) => isTSUndefinedKeyword(type))
+            .slice(0, 1)
+          const nullKeywords = flattenTypes
+            .filter((type) => isTSNullKeyword(type))
+            .slice(0, 1)
           const replacement = tsUnionType([
             ...otherTypes,
             ...undefinedKeywords,
